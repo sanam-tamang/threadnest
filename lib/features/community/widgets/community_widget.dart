@@ -1,0 +1,139 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:threadnest/common/widgets/app_cached_network_image.dart';
+import 'package:threadnest/dependency_injection.dart';
+import 'package:threadnest/features/community/blocs/get_joined_community_bloc/get_community_bloc.dart';
+import 'package:threadnest/features/community/blocs/join_community_bloc/join_community_bloc.dart';
+import 'package:threadnest/features/community/models/community.dart';
+
+class BuildCommunitysWidget extends StatefulWidget {
+  const BuildCommunitysWidget({
+    super.key,
+    required this.communities,
+    this.physics,
+    this.showJoinBtn = true,
+    this.shrinkWrap = false,
+    this.onTap,
+  });
+
+  final List<Community> communities;
+  final ScrollPhysics? physics;
+  final bool showJoinBtn;
+  final bool shrinkWrap;
+  final void Function(Community community)? onTap;
+
+  @override
+  State<BuildCommunitysWidget> createState() => _BuildCommunitysWidgetState();
+}
+
+class _BuildCommunitysWidgetState extends State<BuildCommunitysWidget> {
+  final Set<String> _joinedCommunities = {};
+
+  void _onCommunityJoined(String communityId) {
+    setState(() {
+      _joinedCommunities.add(communityId);
+
+      sl<JoinCommunityBloc>().add(JoinCommunityEvent(communityId));
+      // sl<GetCommunityBloc>().add(const GetCommunityEvent());
+      sl<GetJoinedCommunityBloc>().add(const GetJoinedCommunityEvent());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.communities.isEmpty
+        ? const Text("You haven't joined any communities")
+        : ListView.builder(
+            physics: widget.physics,
+            shrinkWrap: widget.shrinkWrap,
+            padding: EdgeInsets.zero,
+            itemCount: widget.communities.length,
+            itemBuilder: (context, index) {
+              final community = widget.communities[index];
+
+              return InkWell(
+                onTap: () =>
+                    widget.onTap != null ? widget.onTap!(community) : null,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Community Image
+                      SizedBox(
+                        width: 40,
+                        child: AppCachedNetworkImage(
+                          isCircular: true,
+                          imageUrl: community.imageUrl,
+                        ),
+                      ),
+                      const Gap(8),
+
+                      // Community Name and Description
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              community.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            community.description != null
+                                ? Text(
+                                    community.description!,
+                                    overflow: TextOverflow.clip,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  )
+                                : const SizedBox.shrink(),
+                          ],
+                        ),
+                      ),
+
+                      // Join Button
+                      widget.showJoinBtn
+                          ? JoinButton(
+                              isJoined: community.isUserJoined == true
+                                  ? community.isUserJoined!
+                                  : _joinedCommunities.contains(community.id),
+                              communityId: community.id,
+                              onJoin: _onCommunityJoined,
+                            )
+                          : const SizedBox(),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+  }
+}
+
+class JoinButton extends StatelessWidget {
+  const JoinButton({
+    super.key,
+    required this.communityId,
+    required this.isJoined,
+    required this.onJoin,
+  });
+
+  final String communityId;
+  final bool isJoined;
+  final void Function(String) onJoin;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: isJoined ? null : () => onJoin(communityId),
+      child: Text(isJoined ? "Joined" : "Join"),
+    );
+  }
+}

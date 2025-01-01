@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "402357039635",
+    "project_id": "new-threadnest",
+    "storage_bucket": "new-threadnest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402357039635:android:484d5483d5453ba78a05e6",
+        "android_client_info": {
+          "package_name": "com.sano.threadnest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "402357039635-tt51adca8k2udoeerekt659an5nj5s1i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKNHIHcl_aRn8Wi53DaMq8XxpGh7lVGuY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402357039635-tt51adca8k2udoeerekt659an5nj5s1i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
