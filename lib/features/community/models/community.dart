@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Community {
   final String name;
   final String? description;
@@ -23,5 +24,23 @@ class Community {
         id: map['id'],
         ownerId: map['owner_id'],
         isMember: map['is_member']);
+  }
+
+  Community copyWith({
+    String? name,
+    String? description,
+    String? imageUrl,
+    String? id,
+    bool? isMember,
+    String? ownerId,
+  }) {
+    return Community(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      imageUrl: imageUrl ?? this.imageUrl,
+      id: id ?? this.id,
+      isMember: isMember ?? this.isMember,
+      ownerId: ownerId ?? this.ownerId,
+    );
   }
 }

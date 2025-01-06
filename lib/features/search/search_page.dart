@@ -16,7 +16,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _controller = TextEditingController();
   List<GetPost> _searchResults = [];
-  late List<GetPost> _allPosts; // This will store all posts initially
+  late List<GetPost> _allPosts; 
 
   @override
   void dispose() {
@@ -27,7 +27,7 @@ class _SearchPageState extends State<SearchPage> {
   void _onSearch(String query) {
     final lowerCaseQuery = query.toLowerCase();
     setState(() {
-      // Filter posts by title or content
+ 
       _searchResults = _allPosts.where((post) {
         return post.title.toLowerCase().contains(lowerCaseQuery);
       }).toList();
@@ -44,7 +44,7 @@ class _SearchPageState extends State<SearchPage> {
             onPressed: () {
               _controller.clear();
               setState(() {
-                _searchResults = []; // Clear search results
+                _searchResults = []; 
               });
             },
             icon: const Icon(Icons.clear),
@@ -58,7 +58,7 @@ class _SearchPageState extends State<SearchPage> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _controller,
-                onChanged: _onSearch, // Perform search as user types
+                onChanged: _onSearch, 
                 decoration: InputDecoration(
                   hintText: 'Search by title or content...',
                   prefixIcon: const Icon(Icons.search),
@@ -74,8 +74,7 @@ class _SearchPageState extends State<SearchPage> {
                   if (state is GetPostLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is GetPostLoaded) {
-                    _allPosts = state.posts['normal']!; // Store fetched posts
-                    // Set search results initially to all posts
+                    _allPosts = state.posts['normal']!; 
                     if (_searchResults.isEmpty) {
                       _searchResults = _allPosts;
                     }

@@ -69,20 +69,19 @@ flutter_native_splash:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.14.2"
+  flutter_launcher_icons: ^0.14.2
 
 flutter_launcher_icons:
   android: "launcher_icon"
-  ios: true
-  image_path: assets/images/logo.jpg
-  image_path_android: assets/images/logo.jpg
-  
+  image_path: assets/icon/icon.png
+  min_sdk_android: 24
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: assets/icon/icon.png
   flutter_lints: ^3.0.0
   build_runner: ^2.4.11
   json_serializable: ^6.8.0
   bloc_test: ^9.1.0
   mockito: ^5.4.5
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

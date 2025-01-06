@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:threadnest/common/widgets/app_loading_indicator.dart';
 import 'package:threadnest/dependency_injection.dart';
 import 'package:threadnest/features/community/blocs/get_joined_community_bloc/get_community_bloc.dart';
+import 'package:threadnest/features/community/models/community.dart';
 import 'package:threadnest/features/community/widgets/community_widget.dart';
 import 'package:threadnest/router.dart';
 
@@ -61,9 +62,9 @@ class _DrawerPageState extends State<DrawerPage> {
                       }
                       if (state is GetJoinedCommunityLoaded) {
                         return BuildCommunitysWidget(
-                            onTap: (community) => context.pushNamed(
+                            onTap: (Community community) => context.pushNamed(
                                 AppRouteName.communityPage,
-                                extra: community),
+                                extra: community.copyWith(isMember: true)),
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             showJoinBtn: false,
