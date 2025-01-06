@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:threadnest/common/logo.dart';
+import 'package:threadnest/common/widgets/logo.dart';
 import 'package:threadnest/common/utils/app_dialog.dart';
 import 'package:threadnest/common/utils/validator.dart';
 import 'package:threadnest/features/auth/widgets/already_have_account_text.dart';
@@ -84,6 +84,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 AppTextFormField(
                   hint: "Name",
                   controller: _nameController,
+                  validator: (value) => value!.isEmpty
+                      ? "Name can't be empty"
+                      : value.length > 20
+                          ? "Name can't be greater then twently letters"
+                          : null,
                 ),
                 const Gap(18),
                 AppTextFormField(
@@ -101,6 +106,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   hint: "Confirm Password",
                   controller: _confirmPasswordController,
                   isObscureText: true,
+                  validator: (value) => value == _passwordController.text
+                      ? null
+                      : "Confirm password do not match",
                 ),
                 const Gap(20),
                 BlocListener<AuthBloc, AuthState>(
@@ -113,8 +121,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           context.pop();
                         }
                       } else if (state is AuthSignedIn) {
-                        context.goNamed(AppRouteName.navbar);
                         context.pop();
+                        context.goNamed(AppRouteName.navbar);
                       } else if (state is AuthSignedInNotVerified) {
                         context.pop();
                         await AppDialog.success(context,

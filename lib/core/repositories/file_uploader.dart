@@ -29,7 +29,7 @@ class FileUploader implements BaseFileUploader {
     if (file == null) return null;
     try {
       final currentDate = DateTime.now().toIso8601String();
-      final path = 'uploads/$currentDate';
+      final path = 'uploads/$currentDate+${file.path.split("/").last}';
       final fileUrl = await Supabase.instance.client.storage
           .from('file')
           .upload(path, file);

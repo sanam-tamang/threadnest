@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:threadnest/common/widgets/app_cached_network_image.dart';
 import 'package:threadnest/dependency_injection.dart';
-import 'package:threadnest/features/community/blocs/get_joined_community_bloc/get_community_bloc.dart';
 import 'package:threadnest/features/community/blocs/join_community_bloc/join_community_bloc.dart';
 import 'package:threadnest/features/community/models/community.dart';
 
@@ -35,8 +34,7 @@ class _BuildCommunitysWidgetState extends State<BuildCommunitysWidget> {
       _joinedCommunities.add(communityId);
 
       sl<JoinCommunityBloc>().add(JoinCommunityEvent(communityId));
-      // sl<GetCommunityBloc>().add(const GetCommunityEvent());
-      sl<GetJoinedCommunityBloc>().add(const GetJoinedCommunityEvent());
+     
     });
   }
 
@@ -101,8 +99,8 @@ class _BuildCommunitysWidgetState extends State<BuildCommunitysWidget> {
                       // Join Button
                       widget.showJoinBtn
                           ? JoinButton(
-                              isJoined: community.isUserJoined == true
-                                  ? community.isUserJoined!
+                              isJoined: community.isMember == true
+                                  ? community.isMember!
                                   : _joinedCommunities.contains(community.id),
                               communityId: community.id,
                               onJoin: _onCommunityJoined,

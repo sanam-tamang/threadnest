@@ -8,8 +8,10 @@ part 'get_community_event.dart';
 part 'get_community_state.dart';
 
 class GetCommunityBloc extends Bloc<GetCommunityEvent, GetCommunityState> {
-  final CommunityRepository _repository = CommunityRepository();
-  GetCommunityBloc() : super(GetCommunityInitial()) {
+  final CommunityRepository _repository;
+  GetCommunityBloc({required CommunityRepository repo})
+      : _repository = repo,
+        super(GetCommunityInitial()) {
     on<GetCommunityEvent>((event, emit) async {
       emit(GetCommunityLoading());
       try {

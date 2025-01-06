@@ -1,21 +1,18 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:threadnest/common/logo.dart';
+import 'package:threadnest/common/widgets/logo.dart';
 import 'package:threadnest/common/utils/app_dialog.dart';
 import 'package:threadnest/common/utils/validator.dart';
-
 import 'package:threadnest/common/widgets/app_text_form_field.dart';
 import 'package:threadnest/common/utils/progress_indicaror.dart';
 import 'package:threadnest/common/widgets/sign_in_with_google_text.dart';
 import 'package:threadnest/common/widgets/terms_and_conditions_text.dart';
 import 'package:threadnest/dependency_injection.dart';
 import 'package:threadnest/features/auth/blocs/auth_bloc/auth_bloc.dart';
-
 import 'package:threadnest/features/auth/widgets/do_not_have_account.dart';
 import 'package:threadnest/router.dart';
 
@@ -33,7 +30,6 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     _emailController = TextEditingController();
-
     _passwordController = TextEditingController();
     super.initState();
   }

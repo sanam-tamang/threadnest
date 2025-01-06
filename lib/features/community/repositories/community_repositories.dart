@@ -36,16 +36,17 @@ class CommunityRepository {
           .select('*, user_communities(user_id)')
           .eq("user_communities.user_id", auth.currentUser!.uid);
 
-      // final data = await supabase.client
-      //     .from('user_communities')
-      //     .select('communities(*)');
+      final List<Community> communities = List.from(data).map((e) {
+        bool isMember = e['user_communities'] == null
+            ? false
+            : e['user_communities'].isNotEmpty
+                ? true
+                : false;
 
-      // .eq("user_communities.communityId", "communities.id");
+        e.addAll({'is_member': isMember});
 
-      log("$data.toString() fds");
-
-      final List<Community> communities =
-          List.from(data).map((e) => Community.fromMap(e)).toList();
+        return Community.fromMap(e);
+      }).toList();
       return communities;
     } catch (e) {
       rethrow;
@@ -65,7 +66,7 @@ class CommunityRepository {
         final Map<String, dynamic> newData = e['communities'];
 
         //to give something that it know it has user that t
-        newData.addAll({'user_communities': "true"});
+        newData.addAll({'is_memeber': true});
         return Community.fromMap(newData);
       }).toList();
       return communities;

@@ -1,7 +1,8 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
-class AppCachedNetworkImage extends StatefulWidget {
+class AppCachedNetworkImage extends StatelessWidget {
   const AppCachedNetworkImage({
     super.key,
     required this.imageUrl,
@@ -9,6 +10,8 @@ class AppCachedNetworkImage extends StatefulWidget {
     this.borderRadius,
     this.fit,
     this.isCircular = false,
+    this.radius,
+    this.backgroundColor,
   });
 
   final String? imageUrl;
@@ -16,23 +19,19 @@ class AppCachedNetworkImage extends StatefulWidget {
   final double? borderRadius;
   final BoxFit? fit;
   final bool isCircular;
+  final double? radius;
+  final Color? backgroundColor;
 
-  @override
-  State<AppCachedNetworkImage> createState() => _AppCachedNetworkImageState();
-}
-
-class _AppCachedNetworkImageState extends State<AppCachedNetworkImage>
-    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    final fullImageUrl = (widget.prefix ??
+    final fullImageUrl = (prefix ??
             "https://zzpafhzqyklbkmcogjvs.supabase.co/storage/v1/object/public/") +
-        (widget.imageUrl ?? '');
+        (imageUrl ?? '');
 
-    return widget.imageUrl != null
-        ? widget.isCircular
+    return imageUrl != null
+        ? isCircular
             ? CircleAvatar(
+                radius: radius,
                 backgroundImage: ExtendedNetworkImageProvider(
                   fullImageUrl,
                   cache: true,
@@ -42,12 +41,12 @@ class _AppCachedNetworkImageState extends State<AppCachedNetworkImage>
                     const Icon(Icons.error),
               )
             : ClipRRect(
-                borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
+                borderRadius: BorderRadius.circular(borderRadius ?? 8),
                 child: ExtendedImage.network(
                   cacheRawData: true,
                   clearMemoryCacheIfFailed: true,
                   fullImageUrl,
-                  fit: widget.fit ?? BoxFit.cover,
+                  fit: fit ?? BoxFit.cover,
                   cache: true,
                   loadStateChanged: (state) {
                     switch (state.extendedImageLoadState) {
@@ -72,9 +71,15 @@ class _AppCachedNetworkImageState extends State<AppCachedNetworkImage>
                   },
                 ),
               )
-        : const CircleAvatar();
+        : isCircular
+            ? CircleAvatar(
+                radius: radius,
+              )
+            : Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: backgroundColor ??
+                        Theme.of(context).colorScheme.surfaceDim),
+              );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

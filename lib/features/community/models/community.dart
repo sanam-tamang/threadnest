@@ -3,27 +3,25 @@ class Community {
   final String? description;
   final String? imageUrl;
   final String id;
-  final bool? isUserJoined;
+  final bool? isMember;
+  final String ownerId;
 
   Community({
     required this.name,
     this.description,
     this.imageUrl,
     required this.id,
-    required this.isUserJoined,
+    required this.isMember,
+    required this.ownerId,
   });
 
   factory Community.fromMap(Map<String, dynamic> map) {
     return Community(
-      name: map['name'],
-      description: map['description'],
-      imageUrl: map['imageUrl'],
-      id: map['id'],
-      isUserJoined: map['user_communities'] == null
-          ? null
-          : map['user_communities'].isNotEmpty
-              ? true
-              : false,
-    );
+        name: map['name'],
+        description: map['description'],
+        imageUrl: map['image_url'],
+        id: map['id'],
+        ownerId: map['owner_id'],
+        isMember: map['is_member']);
   }
 }

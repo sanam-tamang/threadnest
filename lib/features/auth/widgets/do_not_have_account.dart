@@ -9,9 +9,7 @@ class DoNotHaveAccountText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        context.goNamed(AppRouteName.signup);
-      },
+      onTap: () => context.goNamed(AppRouteName.signup),
       child: RichText(
         textAlign: TextAlign.center,
         text: TextSpan(

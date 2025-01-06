@@ -14,10 +14,15 @@ class CreateCommunityBloc
     extends Bloc<CreateCommunityEvent, CreateCommunityState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final BaseFileUploader _imageUploader = FileUploader();
-  final CommunityRepository _repo = CommunityRepository();
+  final BaseFileUploader _imageUploader;
+  final CommunityRepository _repo;
 
-  CreateCommunityBloc() : super(CreateCommunityInitial()) {
+  CreateCommunityBloc(
+      {required BaseFileUploader fileUploader,
+      required CommunityRepository repo})
+      : _imageUploader = fileUploader,
+        _repo = repo,
+        super(CreateCommunityInitial()) {
     on<CreateCommunityEvent>(_onCreateCommunity);
   }
 

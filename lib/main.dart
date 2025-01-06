@@ -1,33 +1,42 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:threadnest/common/extension.dart';
 import 'package:threadnest/core/theme/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:threadnest/dependency_injection.dart' as di;
 import 'package:threadnest/features/auth/blocs/auth_bloc/auth_bloc.dart';
+import 'package:threadnest/features/chat/blocs/chat_room_bloc/chat_room_bloc.dart';
+import 'package:threadnest/features/chat/blocs/create_chat_room_bloc/create_chat_room_bloc.dart';
+import 'package:threadnest/features/chat/blocs/message_bloc/message_bloc.dart';
+import 'package:threadnest/features/chat/blocs/send_message_bloc/send_message_bloc.dart';
+import 'package:threadnest/features/comment/blocs/post_comment_bloc/post_comment_bloc.dart';
+import 'package:threadnest/features/comment/blocs/vote_comment_bloc/vote_comment_bloc.dart';
 import 'package:threadnest/features/community/blocs/create_community_bloc/create_community_bloc.dart';
 import 'package:threadnest/features/community/blocs/get_community_bloc/get_community_bloc.dart';
 import 'package:threadnest/features/community/blocs/get_joined_community_bloc/get_community_bloc.dart';
 import 'package:threadnest/features/community/blocs/join_community_bloc/join_community_bloc.dart';
-import 'package:threadnest/features/question/blocs/get_question_bloc/get_question_bloc.dart';
-import 'package:threadnest/features/question/blocs/post_question_bloc/post_question_bloc.dart';
-import 'package:threadnest/features/question/blocs/question_vote_bloc/question_vote_bloc.dart';
+import 'package:threadnest/features/community_admin/blocs/remove_community_bloc/remove_community_post_bloc.dart';
+import 'package:threadnest/features/post/blocs/get_post_by_id_bloc/get_post_by_id_bloc.dart';
+import 'package:threadnest/features/post/blocs/get_posts_bloc/get_posts_bloc.dart';
+import 'package:threadnest/features/post/blocs/post_feed_bloc/post_feed_bloc.dart';
+import 'package:threadnest/features/post/blocs/post_vote_bloc/post_vote_bloc.dart';
+import 'package:threadnest/features/profile/blocs/edit_user_bloc/edit_user_bloc.dart';
+import 'package:threadnest/features/profile/blocs/user_bloc/user_bloc.dart';
 import 'package:threadnest/firebase_options.dart';
 import 'package:threadnest/router.dart';
 
-late String initialRoute;
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   // await ScreenUtil.ensureScreenSize();
   GoRouter.optionURLReflectsImperativeAPIs = true;
-  await preloadSVGs(['assets/svgs/google_logo.svg']);
+  di.init();
+  // await preloadSVGs(['assets/svgs/google_logo.svg']);
 
   await Supabase.initialize(
     url: 'https://zzpafhzqyklbkmcogjvs.supabase.co',
@@ -37,20 +46,10 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
 
-  FirebaseAuth.instance.authStateChanges().listen(
-    (user) {
-      if (user == null) {
-        initialRoute = AppRouteName.login.path();
-      } else {
-        initialRoute = AppRouteName.navbar.rootPath();
-      }
-    },
-  );
-  // initialRoute = AppRouteName.navbar.rootPath();
-
-  await di.init();
   runApp(const MyApp());
+    FlutterNativeSplash.remove();
 }
 
 Future<void> preloadSVGs(List<String> paths) async {
@@ -65,27 +64,34 @@ Future<void> preloadSVGs(List<String> paths) async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
+          BlocProvider(create: (context) => di.sl<AuthBloc>()),
+          BlocProvider(create: (context) => di.sl<PostFeedBloc>()),
           BlocProvider(
-            create: (context) => di.sl<AuthBloc>(),
-          ),
-          BlocProvider(
-            create: (context) => di.sl<PostQuestionBloc>(),
-          ),
-          BlocProvider(create: (context) => di.sl<GetQuestionBloc>()),
-          BlocProvider(
-            create: (context) => di.sl<CreateCommunityBloc>(),
-          ),
+              create: (context) =>
+                  di.sl<GetPostsBloc>()..add(const GetPostsEvent())),
+          BlocProvider(create: (context) => di.sl<CreateCommunityBloc>()),
           BlocProvider(
             create: (context) =>
                 di.sl<GetCommunityBloc>()..add(const GetCommunityEvent()),
           ),
           BlocProvider(create: (context) => di.sl<JoinCommunityBloc>()),
-          BlocProvider(create: (context) => di.sl<QuestionVoteBloc>()),
+          BlocProvider(create: (context) => di.sl<PostVoteBloc>()),
+          BlocProvider(create: (context) => di.sl<GetPostByIdBloc>()),
+          BlocProvider(create: (context) => di.sl<PostCommentBloc>()),
+          BlocProvider(create: (context) => di.sl<VoteCommentBloc>()),
+          BlocProvider(create: (context) => di.sl<RemoveCommunityPostBloc>()),
+          BlocProvider(create: (context) => di.sl<CreateChatRoomBloc>()),
+          BlocProvider(create: (context) => di.sl<UserBloc>()),
+          BlocProvider(create: (context) => di.sl<EditUserBloc>()),
+          BlocProvider(create: (context) => di.sl<SendMessageBloc>()),
+          BlocProvider(create: (context) => di.sl<MessageBloc>()),
+          BlocProvider(
+              create: (context) =>
+                  di.sl<ChatRoomBloc>()..add(const GetChatRoomEvent())),
           BlocProvider(
             create: (context) => di.sl<GetJoinedCommunityBloc>()
               ..add(const GetJoinedCommunityEvent()),
@@ -95,12 +101,11 @@ class MyApp extends StatelessWidget {
           title: 'Threadnest',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              useMaterial3: true,
               colorScheme:
                   ColorScheme.fromSeed(seedColor: ColorsManager.mainBlue),
               textTheme:
                   GoogleFonts.latoTextTheme(Theme.of(context).textTheme)),
-          routerConfig: AppRoute.router(initialRoute),
+          routerConfig: AppRoute.router,
         ));
   }
 }

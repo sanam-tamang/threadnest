@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,22 +22,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     SignUpWithEmailAndPasswordEvent event,
     Emitter<AuthState> emit,
   ) async {
+    log("hello world ");
     emit(AuthLoading());
     try {
-      if (event.password != event.confirmPassword) {
-        emit(const AuthError(Failure(message: "Passwords do not match")));
-      } else {
-        await _firebaseAuth.createUserWithEmailAndPassword(
-          email: event.email,
-          password: event.password,
-        );
+      await _firebaseAuth.createUserWithEmailAndPassword(
+        email: event.email,
+        password: event.password,
+      );
 
-        final userId = _firebaseAuth.currentUser!.uid;
+      final userId = _firebaseAuth.currentUser!.uid;
+      await _firebaseAuth.currentUser?.sendEmailVerification();
 
-        await _createUserOnSupabaseTable(userId, event);
+      await _createUserOnSupabaseTable(userId, event);
 
-        emit(AuthSignedInNotVerified());
-      }
+      emit(AuthSignedInNotVerified());
     } on FirebaseAuthException catch (e) {
       emit(AuthError(Failure(message: e.message ?? "Sign-up failed")));
     } catch (e) {

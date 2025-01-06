@@ -11,6 +11,7 @@ import 'package:threadnest/common/utils/image_picker.dart';
 import 'package:threadnest/common/utils/progress_indicaror.dart';
 import 'package:threadnest/dependency_injection.dart';
 import 'package:threadnest/features/community/blocs/create_community_bloc/create_community_bloc.dart';
+import 'package:threadnest/features/community/blocs/get_joined_community_bloc/get_community_bloc.dart';
 
 class CreateCommunityPage extends StatefulWidget {
   const CreateCommunityPage({super.key});
@@ -167,11 +168,26 @@ class _CreateCommunityPageState extends State<CreateCommunityPage> {
         children: [
           Stack(
             children: [
-              CircleAvatar(
-                backgroundImage: _communityImage != null
-                    ? FileImage(_communityImage!)
-                    : null,
-                radius: 100,
+              Container(
+                height: 200,
+                width: double.maxFinite,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    borderRadius: BorderRadius.circular(16),
+                    image: _communityImage != null
+                        ? DecorationImage(
+                            fit: BoxFit.cover,
+                            image: FileImage(_communityImage!))
+                        : null),
+                child: _communityImage != null
+                    ? null
+                    : IconButton(
+                        onPressed: _pickCommunityImage,
+                        icon: const Icon(
+                          Icons.image,
+                          color: Colors.grey,
+                          size: 100,
+                        )),
               ),
               Positioned(
                 right: -5,
@@ -180,7 +196,7 @@ class _CreateCommunityPageState extends State<CreateCommunityPage> {
                   transform: Matrix4.identity()
                     ..scale(0.7)
                     ..rotateZ(12),
-                  child: IconButton.outlined(
+                  child: IconButton.filledTonal(
                       onPressed: _pickCommunityImage,
                       icon: const Icon(LineIcons.edit)),
                 ),
@@ -197,6 +213,8 @@ class _CreateCommunityPageState extends State<CreateCommunityPage> {
 
                 await AppDialog.error(context, state.failure.message);
               } else if (state is CreateCommunityLoaded) {
+                sl<GetJoinedCommunityBloc>()
+                    .add(const GetJoinedCommunityEvent());
                 context.pop();
                 context.pop();
 

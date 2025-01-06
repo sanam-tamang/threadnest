@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:threadnest/features/chat/pages/chat_room_page.dart';
 import 'package:threadnest/features/community/pages/community_page.dart';
+import 'package:threadnest/features/community/widgets/join_community_listener.dart';
 import 'package:threadnest/features/home/pages/home.dart';
+import 'package:threadnest/features/profile/pages/user_profile.dart';
 import 'package:threadnest/router.dart';
 
 class NavigationBarPage extends StatefulWidget {
@@ -13,50 +16,66 @@ class NavigationBarPage extends StatefulWidget {
 }
 
 class _NavigationBarPageState extends State<NavigationBarPage> {
-  final PageController _pageController = PageController();
+  late PageController _pageController;
 
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
     const HomePage(),
     const CommunityPage(),
-    Container(), // Placeholder for Create Post Page
-    Container(), // Placeholder for Notifications Page
-    Container(), // Placeholder for Profile Page
+    Container(),
+    const ChatRoomPage(),
+    const UserProfilePage(),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        children: _pages,
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, -2),
-            ),
-          ],
+    return JoinCommunityListener(
+      child: Scaffold(
+        body: PageView(
+          // index:  _selectedIndex,
+          physics: const NeverScrollableScrollPhysics(),
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          children: _pages,
         ),
-        child: SafeArea(
-          child: ModernNavigationBar(
-            selectedIndex: _selectedIndex,
-            onItemSelected: (index) {
-              _pageController.jumpToPage(index);
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: ModernNavigationBar(
+              selectedIndex: _selectedIndex,
+              onItemSelected: (index) {
+                _pageController.jumpToPage(index);
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
           ),
         ),
       ),
@@ -84,7 +103,7 @@ class ModernNavigationBar extends StatelessWidget {
           _buildNavItem(0, LineIcons.home, 'Home'),
           _buildNavItem(1, LineIcons.users, 'Communities'),
           _buildCreateButton(context),
-          _buildNavItem(3, LineIcons.bell, 'Notifications'),
+          _buildNavItem(3, LineIcons.facebookMessenger, 'Message'),
           _buildNavItem(4, LineIcons.user, 'Profile'),
         ],
       ),
@@ -127,14 +146,14 @@ class ModernNavigationBar extends StatelessWidget {
       child: Container(
         width: 48,
         height: 48,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.black,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black12,
               blurRadius: 6,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),

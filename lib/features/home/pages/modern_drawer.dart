@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:threadnest/common/widgets/app_loading_indicator.dart';
 import 'package:threadnest/dependency_injection.dart';
 import 'package:threadnest/features/community/blocs/get_joined_community_bloc/get_community_bloc.dart';
 import 'package:threadnest/features/community/widgets/community_widget.dart';
@@ -55,6 +56,9 @@ class _DrawerPageState extends State<DrawerPage> {
                   ),
                   BlocBuilder<GetJoinedCommunityBloc, GetJoinedCommunityState>(
                     builder: (context, state) {
+                      if (state is GetJoinedCommunityLoading) {
+                        return const AppLoadingIndicator();
+                      }
                       if (state is GetJoinedCommunityLoaded) {
                         return BuildCommunitysWidget(
                             onTap: (community) => context.pushNamed(
@@ -65,7 +69,7 @@ class _DrawerPageState extends State<DrawerPage> {
                             showJoinBtn: false,
                             communities: state.communities);
                       } else {
-                        return const Text("else condition");
+                        return const SizedBox();
                       }
                     },
                   ),
