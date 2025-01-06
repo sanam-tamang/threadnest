@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>README - Flutter Project with Supabase and Firebase</title>
-</head>
+
+
 <body>
  <h1>ThreadNest Forum Software</h1>
     <p>ThreadNest is a community-driven forum software designed to foster engaging discussions, social interactions, and knowledge sharing. The platform allows users to sign up, join communities, create posts, interact through comments, and message other members.</p>
@@ -185,4 +180,4 @@ CREATE TABLE messages (
 
 
 </body>
-</html>
+
