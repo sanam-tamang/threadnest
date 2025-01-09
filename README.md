@@ -68,13 +68,17 @@
       <strong>Set up Supabase:</strong>
       <ul>
         <li>Create a new project in <a href="https://supabase.com">Supabase</a>.</li>
-        <li>Copy the API keys and URL and add them to the <code>lib/config.dart</code> file:</li>
+        <li>Copy the API keys and URL and add them to the <code>lib/main.dart</code> file:</li>
       </ul>
-      <pre><code>
-const String SUPABASE_URL = "https://your-supabase-url.supabase.co";
-const String SUPABASE_ANON_KEY = "your-anon-key";
-      </code></pre>
-    </li>
+    <pre><code>
+        await Supabase.initialize(
+    url: 'https://your-supabase-url.supabase.co',
+    anonKey:
+        'your-anon-key',
+  );
+
+</code></pre>
+</li>
     <li>
       <strong>Set up Firebase:</strong>
       <ul>
