@@ -16,7 +16,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _controller = TextEditingController();
   List<GetPost> _searchResults = [];
-  late List<GetPost> _allPosts; 
+  late List<GetPost> _allPosts;
 
   @override
   void dispose() {
@@ -27,7 +27,6 @@ class _SearchPageState extends State<SearchPage> {
   void _onSearch(String query) {
     final lowerCaseQuery = query.toLowerCase();
     setState(() {
- 
       _searchResults = _allPosts.where((post) {
         return post.title.toLowerCase().contains(lowerCaseQuery);
       }).toList();
@@ -36,75 +35,83 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Posts'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _controller.clear();
-              setState(() {
-                _searchResults = []; 
-              });
-            },
-            icon: const Icon(Icons.clear),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _controller,
-                onChanged: _onSearch, 
-                decoration: InputDecoration(
-                  hintText: 'Search by title or content...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Scaffold(
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          backgroundColor: Colors.white,
+          title: const Text('Search Posts'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                _controller.clear();
+                setState(() {
+                  _searchResults = [];
+                });
+              },
+              icon: const Icon(Icons.clear),
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Column(
+            // mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _controller,
+                  onChanged: _onSearch,
+                  decoration: InputDecoration(
+                    hintText: 'Search by title or content...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: BlocBuilder<GetPostsBloc, GetPostState>(
-                builder: (context, state) {
-                  if (state is GetPostLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is GetPostLoaded) {
-                    _allPosts = state.posts['normal']!; 
-                    if (_searchResults.isEmpty) {
-                      _searchResults = _allPosts;
-                    }
+              Expanded(
+                child: BlocBuilder<GetPostsBloc, GetPostState>(
+                  builder: (context, state) {
+                    if (state is GetPostLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is GetPostLoaded) {
+                      _allPosts = state.posts['normal']!;
+                      if (_searchResults.isEmpty) {
+                        _searchResults = _allPosts;
+                      }
 
-                    return _searchResults.isEmpty
-                        ? const Center(child: Text('No posts found'))
-                        : ListView.builder(
-                            itemCount: _searchResults.length,
-                            itemBuilder: (context, index) {
-                              final post = _searchResults[index];
-                              return ListTile(
-                                title: Text(post.title),
-                                subtitle: post.content!=null? Text(post.content!): null,
-                                onTap: () => context.pushNamed(
-                                  AppRouteName.questionDetail,
-                                  queryParameters: {'postKey': 'normal'},
-                                  pathParameters: {"postId": post.id},
-                                ),
-                              );
-                            },
-                          );
-                  } else if (state is GetPostFailure) {
-                    return AppErrorWidget(failure: state.failure);
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
+                      return _searchResults.isEmpty
+                          ? const Center(child: Text('No posts found'))
+                          : ListView.builder(
+                              itemCount: _searchResults.length,
+                              itemBuilder: (context, index) {
+                                final post = _searchResults[index];
+                                return ListTile(
+                                  title: Text(post.title),
+                                  subtitle: post.content != null
+                                      ? Text(post.content!)
+                                      : null,
+                                  onTap: () => context.pushNamed(
+                                    AppRouteName.questionDetail,
+                                    queryParameters: {'postKey': 'normal'},
+                                    pathParameters: {"postId": post.id},
+                                  ),
+                                );
+                              },
+                            );
+                    } else if (state is GetPostFailure) {
+                      return AppErrorWidget(failure: state.failure);
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
