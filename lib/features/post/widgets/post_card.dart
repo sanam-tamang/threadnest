@@ -45,22 +45,22 @@ class _PostCardState extends State<PostCard> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(20),
+          color: Theme.of(context).colorScheme.surface,
+          // borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-                color: Theme.of(context).primaryColor.withAlpha(100),
+                color: Theme.of(context).primaryColor,
                 offset: const Offset(5, 5),
                 blurRadius: 10,
                 spreadRadius: -5)
           ]),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      margin: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.only(bottom: 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildMainContent(),
-          const Gap(20),
+          const Gap(8),
           _buildPostFooterActionButtons(),
         ],
       ),
@@ -149,22 +149,29 @@ class _PostCardState extends State<PostCard> {
       children: [
         _postCardEitherAuthorOrCommunity(),
         _buildTitle(),
-        if (widget.post.content != null) ...[
+        if (widget.post.content != null && widget.post.content!.isNotEmpty) ...[
           const Gap(4),
           Text(widget.post.content!),
         ],
         if (widget.post.imageUrl != null) ...[
-          const Gap(4),
-          AppCachedNetworkImage(
-            imageUrl: widget.post.imageUrl,
-            borderRadius: 12,
+          Gap(4),
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color:
+                        ColorScheme.of(context).inverseSurface.withAlpha(40))),
+            child: AppCachedNetworkImage(
+              imageUrl: widget.post.imageUrl,
+              borderRadius: 12,
+            ),
           )
         ],
         if (widget.post.documentUrl != null) ...[
-          const Gap(8),
+          const Gap(4),
           _buildDocumentWidget(),
         ],
-        const Gap(16),
+        const Gap(8),
       ],
     );
   }
@@ -193,7 +200,10 @@ class _PostCardState extends State<PostCard> {
   Text _buildTitle() {
     return Text(
       widget.post.title,
-      style: Theme.of(context).textTheme.titleLarge,
+      style: Theme.of(context)
+          .textTheme
+          .titleMedium
+          ?.copyWith(fontWeight: FontWeight.w700, color: Colors.black87),
     );
   }
 

@@ -1,4 +1,3 @@
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,6 +46,7 @@ class _HomePageState extends State<HomePage> {
           statusBarBrightness: Brightness.dark,
         ),
         child: Scaffold(
+          backgroundColor: Colors.grey.shade200,
           drawer: const DrawerPage(),
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -68,8 +68,8 @@ class _HomePageState extends State<HomePage> {
                         },
                         icon: const Icon(Icons.search))
                   ],
-                  backgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainerLowest,
+                  // backgroundColor:
+                  //     Theme.of(context).colorScheme.surfaceContainerLowest,
                 ),
               ];
             },
