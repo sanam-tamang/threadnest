@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:threadnest/features/chat/pages/chat_room_page.dart';
 import 'package:threadnest/features/community/pages/community_page.dart';
-import 'package:threadnest/features/community/widgets/join_community_listener.dart';
 import 'package:threadnest/features/home/pages/home.dart';
 import 'package:threadnest/features/profile/pages/user_profile.dart';
 import 'package:threadnest/router.dart';
@@ -42,40 +41,38 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
 
   @override
   Widget build(BuildContext context) {
-    return JoinCommunityListener(
-      child: Scaffold(
-        body: PageView(
-          // index:  _selectedIndex,
-          physics: const NeverScrollableScrollPhysics(),
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          children: _pages,
-        ),
-        bottomNavigationBar: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8,
-                offset: Offset(0, -2),
-              ),
-            ],
-          ),
-          child: SafeArea(
-            child: ModernNavigationBar(
-              selectedIndex: _selectedIndex,
-              onItemSelected: (index) {
-                _pageController.jumpToPage(index);
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
+    return Scaffold(
+      body: PageView(
+        // index:  _selectedIndex,
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: _pages,
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, -2),
             ),
+          ],
+        ),
+        child: SafeArea(
+          child: ModernNavigationBar(
+            selectedIndex: _selectedIndex,
+            onItemSelected: (index) {
+              _pageController.jumpToPage(index);
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
           ),
         ),
       ),
@@ -147,7 +144,7 @@ class ModernNavigationBar extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: const BoxDecoration(
-          color: Colors.black,
+          color: Colors.black54,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
