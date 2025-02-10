@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   go_router: ^14.2.6
   google_sign_in: ^6.2.1
+  google_sign_in_web: ^0.12.4+3
   flutter_bloc: ^8.1.6
   gap: ^3.0.1
   font_awesome_flutter: ^10.7.0
@@ -61,7 +62,7 @@ dependencies:
   flutter_downloader: ^1.11.8
   carousel_slider: ^5.0.0
   flutter_native_splash: ^2.4.3
-
+  
 flutter_native_splash:
   color: "#ffffff"
   image: assets/images/logo.jpg

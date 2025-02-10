@@ -120,9 +120,7 @@ class _SignInPageState extends State<SignInPage> {
                   const SigninWithGoogleText(),
                   const Gap(15),
                   InkWell(
-                    onTap: () {
-                      // context.read<AuthCubit>().signInWithGoogle();
-                    },
+                    onTap: () => sl<AuthBloc>().add(SignInWithGoogleEvent()),
                     child: SvgPicture.asset(
                       'assets/svgs/google_logo.svg',
                       width: 40,

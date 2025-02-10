@@ -1,8 +1,9 @@
-import 'dart:developer';
-
+import 'dart:math';
+import 'dart:developer' as dev;
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:threadnest/core/failure/failure.dart';
 
@@ -22,7 +23,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     SignUpWithEmailAndPasswordEvent event,
     Emitter<AuthState> emit,
   ) async {
-    log("hello world ");
     emit(AuthLoading());
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
@@ -33,7 +33,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final userId = _firebaseAuth.currentUser!.uid;
       await _firebaseAuth.currentUser?.sendEmailVerification();
 
-      await _createUserOnSupabaseTable(userId, event);
+      await _createUserOnSupabaseTable(
+        userId: userId,
+        email: event.email,
+        name: event.name,
+      );
 
       emit(AuthSignedInNotVerified());
     } on FirebaseAuthException catch (e) {
@@ -67,8 +71,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
+
     try {
-      // Add your Google sign-in logic here (e.g., using GoogleSignIn plugin)
+      final _gAccount = await GoogleSignIn().signIn();
+
+      final _gAuth = await _gAccount!.authentication;
+
+      final credentials = GoogleAuthProvider.credential(
+          accessToken: _gAuth.accessToken, idToken: _gAuth.idToken);
+      final UserCredential userCredential =
+          await _firebaseAuth.signInWithCredential(credentials);
+      await _createUserOnSupabaseTable(
+        userId: userCredential.user!.uid,
+        email: userCredential.user!.email!,
+        name: userCredential.user?.displayName ?? "Default${Random(10000)}",
+      );
       emit(AuthSignedIn());
     } on FirebaseAuthException catch (e) {
       emit(AuthError(Failure(message: e.message ?? "Google sign-in failed")));
@@ -93,12 +110,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _createUserOnSupabaseTable(
-      String userId, SignUpWithEmailAndPasswordEvent event) async {
-    await Supabase.instance.client.from('users').insert({
-      'id': userId,
-      // 'imageUrl': imagePath,
-      'name': event.name,
-      'email': event.email
-    });
+      {required String userId,
+      required String name,
+      required String email}) async {
+    try {
+      final existingUser = await Supabase.instance.client
+          .from('users')
+          .select()
+          .eq('id', userId)
+          .single();
+
+      if (existingUser['id'] == userId) {
+        return;
+      }
+
+      await Supabase.instance.client.from('users').insert({
+        'id': userId,
+        // 'imageUrl': imagePath,
+        'name': name,
+        'email': email
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 }
