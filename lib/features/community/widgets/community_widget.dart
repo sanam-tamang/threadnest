@@ -57,69 +57,75 @@ class _BuildCommunitysWidgetState extends State<BuildCommunitysWidget> {
               itemCount: widget.communities.length,
               itemBuilder: (context, index) {
                 final community = widget.communities[index];
-      
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () =>
-                          widget.onTap != null ? widget.onTap!(community) : null,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Community Image
-                            SizedBox(
-                              width: 40,
-                              child: AppCachedNetworkImage(
-                                isCircular: true,
-                                imageUrl: community.imageUrl,
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 1),
+                  child: Card(
+                    color: ColorScheme.of(context).surfaceContainerLowest,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                        onTap: () => widget.onTap != null
+                            ? widget.onTap!(community)
+                            : null,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Community Image
+                              SizedBox(
+                                width: 40,
+                                child: AppCachedNetworkImage(
+                                  isCircular: true,
+                                  imageUrl: community.imageUrl,
+                                ),
                               ),
-                            ),
-                            const Gap(8),
-      
-                            // Community Name and Description
-                            Expanded(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    community.name,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                  community.description != null
-                                      ? Text(
-                                          community.description!,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        )
-                                      : const SizedBox.shrink(),
-                                ],
+                              const Gap(8),
+
+                              // Community Name and Description
+                              Expanded(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      community.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                    community.description != null
+                                        ? Text(
+                                            community.description!,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ],
+                                ),
                               ),
-                            ),
-      
-                            // Join Button
-                            widget.showJoinBtn
-                                ? JoinButton(
-                                    isJoined: community.isMember == true
-                                        ? community.isMember!
-                                        : _joinedCommunities
-                                            .contains(community.id),
-                                    communityId: community.id,
-                                    onJoin: _onCommunityJoined,
-                                  )
-                                : const SizedBox(),
-                          ],
+
+                              // Join Button
+                              widget.showJoinBtn
+                                  ? JoinButton(
+                                      isJoined: community.isMember == true
+                                          ? community.isMember!
+                                          : _joinedCommunities
+                                              .contains(community.id),
+                                      communityId: community.id,
+                                      onJoin: _onCommunityJoined,
+                                    )
+                                  : const SizedBox(),
+                            ],
+                          ),
                         ),
                       ),
                     ),

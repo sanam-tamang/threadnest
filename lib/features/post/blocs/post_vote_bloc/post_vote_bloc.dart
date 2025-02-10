@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:threadnest/core/failure/failure.dart';
+import 'package:threadnest/features/post/blocs/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:threadnest/features/post/blocs/get_posts_bloc/get_posts_bloc.dart';
 import 'package:threadnest/features/post/models/post_model.dart';
 
@@ -11,11 +12,16 @@ part 'post_vote_state.dart';
 
 class PostVoteBloc extends Bloc<PostVoteEvent, PostVoteState> {
   final GetPostsBloc _bloc;
+  final GetPostByIdBloc _getPostByIdBloc;
   final PostVoteRepository _repo;
 
-  PostVoteBloc({required GetPostsBloc bloc, required PostVoteRepository repo})
+  PostVoteBloc(
+      {required GetPostsBloc bloc,
+      required PostVoteRepository repo,
+      required GetPostByIdBloc getPostByIdBloc})
       : _bloc = bloc,
         _repo = repo,
+        _getPostByIdBloc = getPostByIdBloc,
         super(PostVoteInitial()) {
     on<PostVoteUpEvent>(_onUpvote);
     on<PostVoteDownEvent>(_onDownvote);
@@ -25,12 +31,15 @@ class PostVoteBloc extends Bloc<PostVoteEvent, PostVoteState> {
       PostVoteUpEvent event, Emitter<PostVoteState> emit) async {
     //This code helps to perform local update
     final getPostBlocState = _bloc.state;
+
     if (getPostBlocState is GetPostLoaded) {
       final posts = getPostBlocState.posts[event.postKey];
       final newPosts = posts?.map((e) {
         if (e.id == event.post.id && event.post.voteStatus == null) {
-          return event.post
+          final post = event.post
               .copyWith(voteStatus: "up", upvotes: event.post.upvotes + 1);
+          _getPostByIdBloc.add(UpdatePostByIdEvent(post));
+          return post;
         } else {
           return e;
         }
@@ -58,8 +67,12 @@ class PostVoteBloc extends Bloc<PostVoteEvent, PostVoteState> {
       final posts = getPostBlocState.posts[event.postKey];
       final newPosts = posts?.map((e) {
         if (e.id == event.post.id && event.post.voteStatus == null) {
-          return event.post.copyWith(
+          final post = event.post.copyWith(
               voteStatus: "down", downvotes: event.post.downvotes + 1);
+          ;
+          _getPostByIdBloc.add(UpdatePostByIdEvent(post));
+
+          return post;
         } else {
           return e;
         }

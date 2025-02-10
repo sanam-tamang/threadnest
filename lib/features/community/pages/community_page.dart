@@ -16,9 +16,11 @@ class CommunityPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: ColorScheme.of(context).surfaceContainerLow,
         drawer: const DrawerPage(),
         appBar: AppBar(
           title: const Text("Communities"),
+          backgroundColor: ColorScheme.of(context).surfaceContainerLowest,
         ),
         body: BlocConsumer<GetCommunityBloc, GetCommunityState>(
           listener: (context, state) {
@@ -33,11 +35,14 @@ class CommunityPage extends StatelessWidget {
               return RefreshIndicator(
                   onRefresh: () async =>
                       sl<GetCommunityBloc>().add(const GetCommunityEvent()),
-                  child: BuildCommunitysWidget(
-                      onTap: (community) => context.pushNamed(
-                          AppRouteName.communityPage,
-                          extra: community),
-                      communities: state.communities));
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: BuildCommunitysWidget(
+                        onTap: (community) => context.pushNamed(
+                            AppRouteName.communityPage,
+                            extra: community),
+                        communities: state.communities),
+                  ));
             }
             return const SizedBox();
           },

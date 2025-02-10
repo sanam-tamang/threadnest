@@ -20,6 +20,7 @@ import 'package:threadnest/features/community/blocs/create_community_bloc/create
 import 'package:threadnest/features/community/blocs/get_community_bloc/get_community_bloc.dart';
 import 'package:threadnest/features/community/blocs/get_joined_community_bloc/get_community_bloc.dart';
 import 'package:threadnest/features/community/blocs/join_community_bloc/join_community_bloc.dart';
+import 'package:threadnest/features/community/blocs/leave_community_bloc/leave_community_bloc.dart';
 import 'package:threadnest/features/community_admin/blocs/remove_community_bloc/remove_community_post_bloc.dart';
 import 'package:threadnest/features/post/blocs/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:threadnest/features/post/blocs/get_posts_bloc/get_posts_bloc.dart';
@@ -46,10 +47,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
 
   runApp(const MyApp());
-    FlutterNativeSplash.remove();
+  FlutterNativeSplash.remove();
 }
 
 Future<void> preloadSVGs(List<String> paths) async {
@@ -89,6 +89,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => di.sl<EditUserBloc>()),
           BlocProvider(create: (context) => di.sl<SendMessageBloc>()),
           BlocProvider(create: (context) => di.sl<MessageBloc>()),
+          BlocProvider(create: (context) => di.sl<LeaveCommunityBloc>()),
           BlocProvider(
               create: (context) =>
                   di.sl<ChatRoomBloc>()..add(const GetChatRoomEvent())),

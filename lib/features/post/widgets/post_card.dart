@@ -49,7 +49,7 @@ class _PostCardState extends State<PostCard> {
           // borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-                color: Theme.of(context).primaryColor,
+                color: ColorScheme.of(context).surfaceContainerHigh,
                 offset: const Offset(5, 5),
                 blurRadius: 10,
                 spreadRadius: -5)
