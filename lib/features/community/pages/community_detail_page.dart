@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:threadnest/common/utils/app_toast.dart';
+import 'package:threadnest/common/utils/progress_indicaror.dart';
 import 'package:threadnest/common/widgets/app_cached_network_image.dart';
 import 'package:threadnest/common/widgets/app_loading_indicator.dart';
 import 'package:threadnest/common/widgets/owner_access_widget.dart';
 import 'package:threadnest/dependency_injection.dart';
 import 'package:threadnest/features/community/blocs/join_community_bloc/join_community_bloc.dart';
+import 'package:threadnest/features/community/blocs/leave_community_bloc/leave_community_bloc.dart';
 import 'package:threadnest/features/community/models/community.dart';
+import 'package:threadnest/features/community/widgets/join_community_listener.dart';
 import 'package:threadnest/features/profile/widgets/user_profile.dart';
 import 'package:threadnest/features/post/blocs/get_posts_bloc/get_posts_bloc.dart';
 import 'package:threadnest/features/post/widgets/post_card.dart';
@@ -28,11 +32,13 @@ class CommunityDetailPage extends StatefulWidget {
 class _CommunityDetailPageState extends State<CommunityDetailPage> {
   late String postKey;
   late GetPostsBloc _bloc;
+  late JoinCommunityBloc _joinCommunityBloc;
   late bool isMember;
   @override
   void initState() {
     postKey = widget.community.id;
     _bloc = sl<GetPostsBloc>();
+    _joinCommunityBloc = sl<JoinCommunityBloc>();
     isMember = widget.community.isMember ?? false;
 
     if (_bloc.state is GetPostLoaded) {
@@ -166,19 +172,67 @@ class _CommunityDetailPageState extends State<CommunityDetailPage> {
               ?.copyWith(fontWeight: FontWeight.w500, letterSpacing: 0.8),
         ),
         const Spacer(),
-        FilledButton(
-            onPressed: () {
-              isMember
-                  ? null
-                  : sl<JoinCommunityBloc>()
-                      .add(JoinCommunityEvent(widget.community.id));
-              setState(() {
-                isMember = !isMember;
-              });
-            },
-            child: Text(isMember ? "Joined" : "Join")),
+        JoinCommunityListener(
+          onSuccess: () {
+            setState(() {
+              isMember = true;
+            });
+          },
+          bloc: _joinCommunityBloc,
+          child: BlocListener<LeaveCommunityBloc, LeaveCommunityState>(
+            listener: _leaveCommunityListener,
+            child: FilledButton(
+                onPressed:
+                    isMember ? _buildLeavingCommunityDialog : _joinCommunity,
+                child: Text(isMember ? "Joined" : "Join")),
+          ),
+        ),
       ],
     );
+  }
+
+  void _leaveCommunityListener(
+    BuildContext context,
+    LeaveCommunityState state,
+  ) {
+    {
+      if (state is LeaveCommunityLoading) {
+        AppProgressIndicator.show(context);
+      } else if (state is LeaveCommunityLoaded) {
+        AppToast.show("Left ${widget.community.name}");
+        setState(() {
+          isMember = false;
+        });
+        context.pop();
+        context.pop();
+      } else if (state is LeaveCommunityFailure) {
+        AppToast.show(state.failure.message.toString());
+        context.pop();
+        context.pop();
+      }
+    }
+  }
+
+  void _joinCommunityListener(
+    BuildContext context,
+    JoinCommunityState state,
+  ) {
+    {
+      if (state is JoinCommunityLoading) {
+        AppProgressIndicator.show(context);
+      } else if (state is JoinCommunityLoaded) {
+        AppToast.show("Joined ${widget.community.name}");
+        setState(() {
+          isMember = true;
+        });
+
+        context.pop();
+      } else if (state is JoinCommunityFailure) {
+        AppToast.show(state.failure.message.toString());
+
+        context.pop();
+      }
+    }
   }
 
   BlocBuilder<GetPostsBloc, GetPostState> _buildQuestionWidget() {
@@ -208,5 +262,32 @@ class _CommunityDetailPageState extends State<CommunityDetailPage> {
         return const SliverToBoxAdapter(child: SizedBox.shrink());
       }
     });
+  }
+
+  void _joinCommunity() {
+    _joinCommunityBloc.add(JoinCommunityEvent(widget.community.id));
+  }
+
+  Future<void> _buildLeavingCommunityDialog() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text("Leave ${widget.community.name}"),
+              content: Row(
+                children: [
+                  Expanded(
+                    child: FilledButton.tonal(
+                        onPressed: () => context.pop(), child: Text("Cancel")),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                      child: FilledButton(
+                          onPressed: () => sl<LeaveCommunityBloc>()
+                              .add(LeaveCommunityEvent(widget.community.id)),
+                          child: Text("Leave"))),
+                ],
+              ));
+        });
   }
 }
