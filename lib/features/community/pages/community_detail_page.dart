@@ -213,28 +213,6 @@ class _CommunityDetailPageState extends State<CommunityDetailPage> {
     }
   }
 
-  void _joinCommunityListener(
-    BuildContext context,
-    JoinCommunityState state,
-  ) {
-    {
-      if (state is JoinCommunityLoading) {
-        AppProgressIndicator.show(context);
-      } else if (state is JoinCommunityLoaded) {
-        AppToast.show("Joined ${widget.community.name}");
-        setState(() {
-          isMember = true;
-        });
-
-        context.pop();
-      } else if (state is JoinCommunityFailure) {
-        AppToast.show(state.failure.message.toString());
-
-        context.pop();
-      }
-    }
-  }
-
   BlocBuilder<GetPostsBloc, GetPostState> _buildQuestionWidget() {
     return BlocBuilder<GetPostsBloc, GetPostState>(builder: (context, state) {
       if (state is GetPostLoading) {
