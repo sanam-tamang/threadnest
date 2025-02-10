@@ -15,7 +15,7 @@ class AppImagePicker {
         return null;
       }
     } catch (e) {
-      rethrow;
+      return null;
     }
   }
 }
