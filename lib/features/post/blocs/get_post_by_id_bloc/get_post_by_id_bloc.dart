@@ -14,6 +14,7 @@ class GetPostByIdBloc extends Bloc<BaseGetPostByIdEvent, GetPostByIdState> {
       : _repo = repo,
         super(GetPostByIdInitial()) {
     on<GetPostByIdEvent>(_onGetPost);
+    on<UpdatePostByIdEvent>(_onUpdatePostByIdEvent);
   }
 
   Future<void> _onGetPost(
@@ -27,5 +28,13 @@ class GetPostByIdBloc extends Bloc<BaseGetPostByIdEvent, GetPostByIdState> {
     } catch (e) {
       emit(GetPostByIdFailure(failure: Failure(message: e.toString())));
     }
+  }
+
+  ///it will update post indivisually 
+ void _onUpdatePostByIdEvent(
+      UpdatePostByIdEvent event, Emitter<GetPostByIdState> emit)  {
+
+      emit(GetPostByIdLoaded(post: event.post));
+   
   }
 }

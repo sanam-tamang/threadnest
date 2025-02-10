@@ -40,7 +40,7 @@ void init() {
       () => CreateCommunityBloc(fileUploader: sl(), repo: sl()));
   sl.registerLazySingleton(() => GetCommunityBloc(repo: sl()));
   sl.registerLazySingleton(() => GetJoinedCommunityBloc(repo: sl()));
-  sl.registerLazySingleton(() => PostVoteBloc(bloc: sl(), repo: sl()));
+  sl.registerLazySingleton(() => PostVoteBloc(bloc: sl(), repo: sl(), getPostByIdBloc: sl()));
   sl.registerFactory(() => JoinCommunityBloc(repo: sl()));
   sl.registerLazySingleton(() => RemoveCommunityPostBloc(repo: sl()));
   sl.registerLazySingleton(() => GetPostByIdBloc(repo: sl()));

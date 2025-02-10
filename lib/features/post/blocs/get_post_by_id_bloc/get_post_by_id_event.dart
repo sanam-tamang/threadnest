@@ -16,3 +16,13 @@ final class GetPostByIdEvent extends BaseGetPostByIdEvent {
   @override
   List<Object> get props => [postId];
 }
+
+///helps to update post locally
+final class UpdatePostByIdEvent extends BaseGetPostByIdEvent {
+  const UpdatePostByIdEvent(
+    this.post,
+  );
+ final  GetPost post;
+  @override
+  List<Object> get props => [post];
+}
