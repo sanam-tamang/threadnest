@@ -87,4 +87,19 @@ class CommunityRepository {
       rethrow;
     }
   }
+
+  Future<void> leaveCommunity({required String communityId}) async {
+    final supabase = Supabase.instance.client;
+
+    try {
+      await supabase
+          .from('user_communities')
+          .delete()
+          .eq('user_id', auth.currentUser!.uid)
+          .eq('community_id', communityId);
+    }  catch (e) {
+
+      rethrow;
+    }
+  }
 }

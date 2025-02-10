@@ -15,6 +15,7 @@ import 'package:threadnest/features/community/blocs/create_community_bloc/create
 import 'package:threadnest/features/community/blocs/get_community_bloc/get_community_bloc.dart';
 import 'package:threadnest/features/community/blocs/get_joined_community_bloc/get_community_bloc.dart';
 import 'package:threadnest/features/community/blocs/join_community_bloc/join_community_bloc.dart';
+import 'package:threadnest/features/community/blocs/leave_community_bloc/leave_community_bloc.dart';
 import 'package:threadnest/features/community/repositories/community_repositories.dart';
 import 'package:threadnest/features/community_admin/blocs/remove_community_bloc/remove_community_post_bloc.dart';
 import 'package:threadnest/features/community_admin/repositories/community_admin_repositories.dart';
@@ -40,7 +41,7 @@ void init() {
   sl.registerLazySingleton(() => GetCommunityBloc(repo: sl()));
   sl.registerLazySingleton(() => GetJoinedCommunityBloc(repo: sl()));
   sl.registerLazySingleton(() => PostVoteBloc(bloc: sl(), repo: sl()));
-  sl.registerLazySingleton(() => JoinCommunityBloc(repo: sl()));
+  sl.registerFactory(() => JoinCommunityBloc(repo: sl()));
   sl.registerLazySingleton(() => RemoveCommunityPostBloc(repo: sl()));
   sl.registerLazySingleton(() => GetPostByIdBloc(repo: sl()));
   sl.registerLazySingleton(() => PostCommentBloc(repo: sl()));
@@ -51,6 +52,7 @@ void init() {
   sl.registerLazySingleton(() => MessageBloc(repo: sl()));
   sl.registerLazySingleton(() => ChatRoomBloc(repo: sl()));
   sl.registerLazySingleton(() => EditUserBloc(repo: sl()));
+  sl.registerLazySingleton(() => LeaveCommunityBloc(repo: sl()));
 
   ///repositories
   sl.registerLazySingleton(() => PostVoteRepository());
