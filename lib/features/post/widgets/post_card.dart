@@ -16,6 +16,7 @@ import 'package:threadnest/common/widgets/vote_button.dart';
 import 'package:threadnest/core/theme/colors.dart';
 import 'package:threadnest/dependency_injection.dart';
 import 'package:threadnest/features/community/blocs/join_community_bloc/join_community_bloc.dart';
+import 'package:threadnest/features/community/widgets/join_community_listener.dart';
 import 'package:threadnest/features/community_admin/blocs/remove_community_bloc/remove_community_post_bloc.dart';
 import 'package:threadnest/features/post/blocs/post_vote_bloc/post_vote_bloc.dart';
 import 'package:threadnest/features/post/models/post_model.dart';
@@ -323,28 +324,33 @@ class _JoinButton extends StatefulWidget {
 
 class _JoinButtonState extends State<_JoinButton> {
   late bool isMemeber;
+  late JoinCommunityBloc bloc;
   @override
   void initState() {
     super.initState();
     isMemeber = widget.widget.post.community.isMember ?? false;
+    bloc = sl<JoinCommunityBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return !isMemeber
-        ? Transform.scale(
-            scale: 0.75,
-            child: FilledButton(
-                onPressed: () {
-                  sl<JoinCommunityBloc>()
-                      .add(JoinCommunityEvent(widget.widget.post.community.id));
-                  setState(() {
-                    isMemeber = !isMemeber;
-                  });
-                },
-                child: const Text("Join")),
-          )
-        : const SizedBox();
+    return JoinCommunityListener(
+      bloc: bloc,
+      child: !isMemeber
+          ? Transform.scale(
+              scale: 0.75,
+              child: FilledButton(
+                  onPressed: () {
+                    bloc.add(
+                        JoinCommunityEvent(widget.widget.post.community.id));
+                    setState(() {
+                      isMemeber = !isMemeber;
+                    });
+                  },
+                  child: const Text("Join")),
+            )
+          : const SizedBox(),
+    );
   }
 }
 
