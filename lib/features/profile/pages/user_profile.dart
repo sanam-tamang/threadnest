@@ -62,91 +62,93 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<UserBloc, UserState>(
-        builder: (context, state) {
-          if (state is UserLoading) {
-            return const AppLoadingIndicator();
-          } else if (state is UserLoaded) {
-            final user = state.user;
-            return NestedScrollView(
-              controller: _scrollController,
-              headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                SliverAppBar(
-                  expandedHeight: 200,
-                  floating: false,
-                  pinned: true,
-                  elevation: 0,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: AnimatedOpacity(
-                      opacity: _isCollapsed ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 300),
-                      child: Row(
+      body: SafeArea(
+        child: BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
+            if (state is UserLoading) {
+              return const AppLoadingIndicator();
+            } else if (state is UserLoaded) {
+              final user = state.user;
+              return NestedScrollView(
+                controller: _scrollController,
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  SliverAppBar(
+                    expandedHeight: 200,
+                    floating: false,
+                    pinned: true,
+                    elevation: 0,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    flexibleSpace: FlexibleSpaceBar(
+                      title: AnimatedOpacity(
+                        opacity: _isCollapsed ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 300),
+                        child: Row(
+                          children: [
+                            Text(
+                              user.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Spacer(),
+                            ElevatedButton(
+                                onPressed: () async {
+                                  await f_auth.FirebaseAuth.instance.signOut();
+                                  context.goNamed(AppRouteName.login);
+                                },
+                                child: Text("Logout",
+                                    style: TextStyle(color: Colors.black)))
+                          ],
+                        ),
+                      ),
+                      background: Stack(
+                        fit: StackFit.expand,
                         children: [
-                          Text(
-                            user.name,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                          AppCachedNetworkImage(
+                            imageUrl: user.imageUrl,
+                            fit: BoxFit.cover,
+                          ),
+                          Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Color.fromRGBO(0, 0, 0, 0.7),
+                                ],
+                              ),
                             ),
                           ),
-                          Spacer(),
-                          ElevatedButton(
-                              onPressed: () {
-                                f_auth.FirebaseAuth.instance.signOut();
-                                context.goNamed(AppRouteName.login);
-                              },
-                              child: Text("Logout",
-                                  style: TextStyle(color: Colors.white)))
                         ],
                       ),
                     ),
-                    background: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        AppCachedNetworkImage(
-                          imageUrl: user.imageUrl,
-                          fit: BoxFit.cover,
-                        ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Color.fromRGBO(0, 0, 0, 0.7),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-              body: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        const Gap(16),
-                        _buildProfileHeader(user),
-                        _buildActionButtons(context, user),
-                        _buildUserStats(user),
-                        _buildBioSection(user),
-                        _buildPostsSection(user),
-                      ],
-                    ),
                   ),
                 ],
-              ),
-            );
-          } else if (state is UserFailure) {
-            return AppErrorWidget(failure: state.failure);
-          }
-          return const SizedBox.shrink();
-        },
+                body: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          const Gap(16),
+                          _buildProfileHeader(user),
+                          _buildActionButtons(context, user),
+                          _buildUserStats(user),
+                          _buildBioSection(user),
+                          _buildPostsSection(user),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else if (state is UserFailure) {
+              return AppErrorWidget(failure: state.failure);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
