@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:developer' as dev;
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -118,9 +117,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           .from('users')
           .select()
           .eq('id', userId)
-          .single();
+          .maybeSingle();
 
-      if (existingUser['id'] == userId) {
+      if (existingUser?['id'] == userId) {
         return;
       }
 
@@ -131,7 +130,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         'email': email
       });
     } catch (e) {
-      rethrow;
+      return;
     }
   }
 }
